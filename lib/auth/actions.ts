@@ -161,6 +161,13 @@ function signupFriendlyMessage(code: string | undefined, fallback: string) {
   }
 }
 
+// Every branch that swallows a Supabase failure logs it. These messages are the
+// only place the underlying reason exists -- the browser only ever sees the
+// generic text below -- so without this, a misconfiguration is undiagnosable.
+function report(scope: string, error: { code?: string; message: string }) {
+  console.error(`[${scope}] Supabase error ${error.code ?? "(no code)"}: ${error.message}`);
+}
+
 export async function signupAction(
   _previous: AuthState,
   formData: FormData,
@@ -211,7 +218,8 @@ export async function signupAction(
       state.fieldErrors.username = USERNAME_TAKEN;
       return state;
     }
-  } catch {
+  } catch (lookupError) {
+    console.error("[signup] username lookup failed:", lookupError);
     state.formError = "Could not check that username right now. Please try again.";
     return state;
   }
@@ -229,35 +237,43 @@ export async function signupAction(
   // the sign-up, so a name that slipped past the check above fails the whole
   // registration. Supabase surfaces that as a generic database error, and the
   // index name is the only clue about what actually went wrong.
-  if (
-    error &&
-    /profiles_username_lower_key|database error saving new user/i.test(error.message)
-  ) {
+  if (error && /profiles_username_lower_key|database error saving new user/i.test(error.message)) {
+    report("signup", error);
     state.fieldErrors.username = USERNAME_TAKEN;
     return state;
   }
 
-  // Supabase reports a duplicate email in two different ways depending on
-  // whether email confirmation is switched on: either an explicit
-  // user_already_exists error, or a placeholder user object with an empty
-  // identities array. Both mean the same thing, so both are checked.
-  const identityCount = data.user?.identities?.length ?? 0;
+  // The error is the only trustworthy signal here. data.user is null for every
+  // failure GoTrue reports, so treating "no user" as "already registered" would
+  // relabel a misconfiguration as a duplicate address.
+  if (error) {
+    report("signup", error);
 
-  if (error?.code === "user_already_exists" || identityCount === 0) {
+    state.isDuplicateEmail =
+      error.code === "user_already_exists" || error.code === "email_exists";
+
+    if (!state.isDuplicateEmail) {
+      state.formError = signupFriendlyMessage(error.code, error.message);
+    }
+
+    return state;
+  }
+
+  if (!data.user) {
+    console.error("[signup] Supabase returned neither a user nor an error.");
+    state.formError = "Sign-up did not complete. Please try again.";
+    return state;
+  }
+
+  // With *Confirm email* on, GoTrue hides a duplicate behind a fake user object
+  // rather than an error, so an empty identities array is the remaining signal
+  // that this address is taken.
+  if ((data.user.identities?.length ?? 0) === 0) {
     state.isDuplicateEmail = true;
     return state;
   }
 
-  if (error) {
-    state.formError = signupFriendlyMessage(error.code, error.message);
-    return state;
-  }
-
-  // Only a user that actually came back with a linked identity is a real
-  // registration rather than a disguised duplicate.
-  if (identityCount > 0) {
-    state.isSuccess = true;
-  }
+  state.isSuccess = true;
 
   return state;
 }
@@ -296,7 +312,8 @@ export async function loginAction(
 
   try {
     email = await resolveLoginEmail(parsed.data.identifier);
-  } catch {
+  } catch (lookupError) {
+    console.error("[login] username lookup failed:", lookupError);
     state.formError = "Could not reach Supabase. Please try again.";
     return state;
   }
@@ -315,6 +332,8 @@ export async function loginAction(
   });
 
   if (error) {
+    report("login", error);
+
     // Unknown account, wrong password, unconfirmed email and disabled account
     // all collapse to one message. Rate limiting stays distinct because it is
     // about this visitor's own behaviour, not about anyone's account.
