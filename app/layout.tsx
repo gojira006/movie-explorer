@@ -20,21 +20,21 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${geist.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col bg-zinc-950 text-zinc-100">
-        <header className="sticky top-0 z-40 border-b border-white/5 bg-zinc-950/90 backdrop-blur">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-5 gap-y-3 px-4 py-3">
-            <Link href="/" className="shrink-0 font-semibold tracking-tight">
-              Movie Explorer
+      <body className="film-grain flex min-h-full flex-col bg-zinc-950 text-zinc-100">
+        <header className="sticky top-0 z-40 border-b border-white/8 bg-zinc-950/82 backdrop-blur-xl">
+          <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-4 sm:px-6">
+            <Link href="/" className="shrink-0 text-base font-bold tracking-[-0.05em] text-zinc-50">
+              Frame<span className="text-amber-300">line</span>
             </Link>
 
-            <nav className="flex items-center gap-4 text-sm text-zinc-400">
-              <Link href="/" className="hover:text-zinc-100">
+            <nav className="flex items-center gap-4 text-sm font-medium text-zinc-400">
+              <Link href="/" className="transition-colors hover:text-amber-100">
                 Home
               </Link>
-              <Link href="/browse" className="hover:text-zinc-100">
+              <Link href="/browse" className="transition-colors hover:text-amber-100">
                 Browse
               </Link>
-              <Link href="/watchlist" className="hover:text-zinc-100">
+              <Link href="/watchlist" className="transition-colors hover:text-amber-100">
                 Watchlist
               </Link>
             </nav>
@@ -52,7 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 name="q"
                 placeholder="Search movies…"
                 aria-label="Search movies"
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-white/30 focus:outline-none"
+                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 transition focus:border-amber-300/70 focus:bg-white/8 focus:outline-none"
               />
             </form>
 
@@ -60,11 +60,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:py-8">
+        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
           {children}
         </main>
 
-        <footer className="mt-12 border-t border-white/5 px-4 py-6">
+        <footer className="mt-16 border-t border-white/8 px-4 py-8">
           <div className="mx-auto flex max-w-7xl flex-col items-center gap-2 text-center text-xs text-zinc-500">
             <p>
               This product uses the TMDB API but is not endorsed or certified by

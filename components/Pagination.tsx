@@ -13,7 +13,7 @@ function pageHref(page: number, query: Record<string, string>) {
 }
 
 const buttonClass =
-  "rounded-lg border border-white/10 px-4 py-2 text-sm text-zinc-300 transition hover:bg-white/5 hover:text-white";
+  "rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-zinc-300 transition hover:border-amber-300/40 hover:bg-amber-300/10 hover:text-amber-100";
 
 export default function Pagination({ page, totalPages, query }: PaginationProps) {
   if (totalPages <= 1) {

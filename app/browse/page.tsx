@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 const selectClass =
-  "rounded-lg border border-white/10 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 focus:border-white/30 focus:outline-none";
+  "rounded-lg border border-white/10 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 transition focus:border-amber-300/70 focus:outline-none";
 
 export default async function BrowsePage({ searchParams }: PageProps<"/browse">) {
   const params = await searchParams;
@@ -58,11 +58,14 @@ export default async function BrowsePage({ searchParams }: PageProps<"/browse">)
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold tracking-tight">Browse movies</h1>
+      <div className="mb-8 border-b border-white/8 pb-6">
+        <p className="eyebrow mb-2">Find your frame</p>
+        <h1 className="section-heading">Browse movies</h1>
+      </div>
 
       <form
         action="/browse"
-        className="mb-8 flex flex-wrap items-end gap-3 rounded-xl border border-white/10 bg-white/5 p-4"
+        className="mb-8 flex flex-wrap items-end gap-3 rounded-xl border border-white/10 bg-white/4 p-4 sm:p-5"
       >
         <label className="flex flex-col gap-1 text-xs text-zinc-400">
           Genre
@@ -101,7 +104,7 @@ export default async function BrowsePage({ searchParams }: PageProps<"/browse">)
 
         <button
           type="submit"
-          className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-zinc-900 transition hover:bg-zinc-200"
+          className="rounded-lg bg-amber-300 px-4 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-amber-200"
         >
           Apply
         </button>
@@ -109,7 +112,7 @@ export default async function BrowsePage({ searchParams }: PageProps<"/browse">)
         {hasFilters ? (
           <Link
             href={`/browse?sort=${sort}`}
-            className="px-1 py-2 text-sm text-zinc-400 hover:text-zinc-100"
+            className="px-1 py-2 text-sm text-zinc-400 transition hover:text-amber-100"
           >
             Clear
           </Link>

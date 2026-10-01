@@ -1,5 +1,53 @@
 @import "tailwindcss";
 
+:root {
+  --canvas: #09090b;
+  --accent: #f6b84a;
+  --accent-strong: #ffd37a;
+}
+
+* { box-sizing: border-box; }
+
+html { background: var(--canvas); scroll-behavior: smooth; }
+
 body {
+  min-height: 100dvh;
+  background: radial-gradient(circle at 78% -12%, rgb(246 184 74 / 0.11), transparent 28rem), var(--canvas);
+  color: #f4f4f5;
   font-family: var(--font-geist), system-ui, sans-serif;
+}
+
+::selection { background: rgb(246 184 74 / 0.35); color: white; }
+
+button, a, input, select { -webkit-tap-highlight-color: transparent; }
+
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.eyebrow { color: var(--accent-strong); font-size: 0.6875rem; font-weight: 650; letter-spacing: 0.12em; text-transform: uppercase; }
+.section-heading { font-size: clamp(1.5rem, 3vw, 2.25rem); font-weight: 650; letter-spacing: -0.045em; line-height: 1.05; }
+
+.poster-card { animation: card-enter 560ms both; animation-delay: calc(var(--card-index, 0) * 36ms); }
+.poster-card__image { box-shadow: 0 16px 38px rgb(0 0 0 / 0.26); transition: box-shadow 240ms ease, transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.poster-card:hover .poster-card__image { box-shadow: 0 23px 42px rgb(0 0 0 / 0.48), 0 0 0 1px rgb(246 184 74 / 0.35); transform: translateY(-5px); }
+.poster-card__image img { transition: transform 500ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.poster-card:hover .poster-card__image img { transform: scale(1.055); }
+
+.film-grain { position: relative; }
+.film-grain::after {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+  content: ""; inset: 0; opacity: 0.035; pointer-events: none; position: absolute; z-index: 1;
+}
+
+@keyframes card-enter { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+::view-transition { pointer-events: none; }
+::view-transition-group(.movie-poster) { animation-duration: 360ms; animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); }
+::view-transition-image-pair(.movie-poster) { animation-name: poster-morph; }
+@keyframes poster-morph { 35% { filter: brightness(1.12) saturate(1.08); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+  ::view-transition-group(*), ::view-transition-image-pair(*) { animation-duration: 0s !important; }
 }

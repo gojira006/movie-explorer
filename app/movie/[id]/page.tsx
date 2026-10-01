@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { ViewTransition } from "react";
 import MovieGrid from "@/components/MovieGrid";
 import WatchlistButtons from "@/components/WatchlistButtons";
 import { getWatchlistMap } from "@/lib/watchlist/queries";
@@ -66,7 +67,7 @@ export default async function MoviePage({ params }: PageProps<"/movie/[id]">) {
 
   return (
     <div className="space-y-12">
-      <section className="relative overflow-hidden rounded-2xl">
+      <section className="relative overflow-hidden rounded-2xl border border-white/8 bg-zinc-900/45 shadow-2xl shadow-black/20">
         {backdrop ? (
           <Image
             src={backdrop}
@@ -81,7 +82,8 @@ export default async function MoviePage({ params }: PageProps<"/movie/[id]">) {
 
         <div className="relative flex flex-col gap-6 p-4 sm:flex-row sm:p-8">
           <div className="w-40 shrink-0 sm:w-56">
-            <div className="relative aspect-2/3 overflow-hidden rounded-xl bg-zinc-800">
+            <ViewTransition name={`movie-poster-${movie.id}`} share="movie-poster" default="none">
+            <div className="relative aspect-2/3 overflow-hidden rounded-xl bg-zinc-800 shadow-2xl shadow-black/50">
               {poster ? (
                 <Image
                   src={poster}
@@ -93,14 +95,16 @@ export default async function MoviePage({ params }: PageProps<"/movie/[id]">) {
                 />
               ) : null}
             </div>
+            </ViewTransition>
           </div>
 
           <div className="min-w-0">
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            <p className="eyebrow mb-3">Feature presentation</p>
+            <h1 className="text-3xl font-bold tracking-[-0.055em] sm:text-5xl">
               {movie.title}
             </h1>
 
-            <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-zinc-400">
+            <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-zinc-400">
               <span>{formatDate(movie.release_date)}</span>
               {movie.runtime ? (
                 <>
@@ -131,7 +135,7 @@ export default async function MoviePage({ params }: PageProps<"/movie/[id]">) {
               </ul>
             ) : null}
 
-            <p className="mt-5 max-w-3xl text-sm leading-relaxed text-zinc-300">
+            <p className="mt-5 max-w-3xl text-sm leading-7 text-zinc-300">
               {movie.overview || "No overview available for this movie."}
             </p>
 
@@ -146,7 +150,7 @@ export default async function MoviePage({ params }: PageProps<"/movie/[id]">) {
       </section>
 
       <section>
-        <h2 className="mb-4 text-xl font-semibold tracking-tight">Trailer</h2>
+        <h2 className="section-heading mb-5">Trailer</h2>
         {trailerKey ? (
           <div className="aspect-video w-full overflow-hidden rounded-xl bg-black">
             <iframe
@@ -165,7 +169,7 @@ export default async function MoviePage({ params }: PageProps<"/movie/[id]">) {
       </section>
 
       <section>
-        <h2 className="mb-4 text-xl font-semibold tracking-tight">Cast</h2>
+        <h2 className="section-heading mb-5">Cast</h2>
         {cast.length === 0 ? (
           <p className="text-sm text-zinc-400">No cast information available.</p>
         ) : (
@@ -203,7 +207,7 @@ export default async function MoviePage({ params }: PageProps<"/movie/[id]">) {
 
       {movie.similar.results.length > 0 ? (
         <section>
-          <h2 className="mb-4 text-xl font-semibold tracking-tight">
+          <h2 className="section-heading mb-5">
             Similar movies
           </h2>
           <MovieGrid movies={movie.similar.results} watchlist={watchlist} />

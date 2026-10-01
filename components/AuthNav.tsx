@@ -41,10 +41,25 @@ export default async function AuthNav() {
     );
   }
 
+  // RLS allows a user to read exactly one table row: their own profile. No
+  // service-role client is needed here, and none should be.
+  const { data } = await supabase
+    .from("profiles")
+    .select("username")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const profile = data as { username?: string } | null;
+
+  // A profile is missing when the account was created before username.sql ran,
+  // or when that script has not been run yet at all. Falling back to the email
+  // keeps the header readable instead of rendering an empty slot.
+  const label = profile?.username || user.email;
+
   return (
     <div className="flex shrink-0 items-center gap-3 text-sm">
       <span className="hidden max-w-[18ch] truncate text-zinc-400 sm:inline">
-        {user.email}
+        {label}
       </span>
       <form action={logOut}>
         <button

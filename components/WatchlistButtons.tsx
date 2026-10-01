@@ -17,10 +17,10 @@ type WatchlistButtonsProps = {
 };
 
 const idleClass =
-  "rounded-md border border-white/10 px-2 py-1 text-xs text-zinc-300 transition hover:bg-white/10 hover:text-white";
+  "rounded-md border border-white/10 px-2 py-1 text-xs text-zinc-300 transition hover:border-amber-300/40 hover:bg-amber-300/10 hover:text-amber-100 disabled:cursor-wait disabled:opacity-50";
 
 const activeClass =
-  "rounded-md border border-emerald-500/40 bg-emerald-500/15 px-2 py-1 text-xs text-emerald-300";
+  "rounded-md border border-amber-300/45 bg-amber-300/15 px-2 py-1 text-xs text-amber-100 disabled:cursor-wait disabled:opacity-50";
 
 export default function WatchlistButtons({
   tmdbId,
